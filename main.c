@@ -6,8 +6,9 @@
 const char *WORDS[] = {"word", "beer", "timber", "time", "water", "teacher", "student", "book", "music", "movie", "game", "food", "cloth", "shoe", "hair", "eye", "nose", "ear", "mouth", "hand", "foot", "heart", "mind", "soul", "dream", "hope", "love", "peace", "joy", "sorrow", "anger", "fear", "courage", "wisdom", "knowledge", "ignorance", "truth", "lie", "honesty", "dishonesty", "friend", "enemy", "alcohol", "coffee", "tea", "milk", "bread", "rice", "pasta", "vegetable", "fruit", "meat", "fish", "bird", "animal", "plant", "tree", "flower", "grass", "sand", "stone", "metal", "wood", "glass", "plastic", "paper", "ink", "paint", "color", "black", "white", "red", "green", "blue", "yellow", "orange", "purple", "brown", "pink", "grey", "silver", "gold", "diamond", "ruby", "emerald", "sapphire", "quartz", "pearl", "jewel", "crystal", "rain", "snow", "wind", "fire", "ice", "smoke", "mist", "fog", "cloud", "sun", "moon", "star", "galaxy", "universe"};
 const char ALPHABET[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 
+int main();
 
-void check(int len, char list[len],char correct_letters[len],char checked_letters[127],int checked_num,int stage) {
+void check(int len, char list[len],char correct_letters[len],char checked_letters[127],int checked_num,int stage,const char rand_word[]) {
     printf("\033[2J\033[H");
     printf("\x1b[1m\x1b[21mHANGMAN\n\n\x1b[0m");
 
@@ -59,19 +60,33 @@ void check(int len, char list[len],char correct_letters[len],char checked_letter
     }
 
     if(stage >= 9){
-        printf("\x1b[31m\nYou have lost!\x1b[0m\n");
-        exit(0);
+        printf("\x1b[31m\nYou have lost! The Word was \x1b[0m%s\x1b[0m\n",rand_word);
+        printf("Play again? (y/n)\n>");
+        char answer;
+        scanf(" %c",&answer);
+        if(answer == 'y'){
+            main();
+        }else{
+            exit(0);
+        }
     }
 
     if(checks == len){
         printf("\x1b[32m\nYou have won!\x1b[0m\n");
-        exit(0);
+        printf("Play again? (y/n)\n>");
+        char answer;
+        scanf(" %c",&answer);
+        if(answer == 'y'){
+            exit(0);
+        }else{
+            exit(0);
+        }
     };
 
     printf("\n\x1b[1mEnter a letter: \x1b[0m");
     scanf(" %s", &input);
     if(strlen(&input) > 1){
-        check(len,list,correct_letters,checked_letters,checked_num,stage);
+        check(len,list,correct_letters,checked_letters,checked_num,stage,rand_word);
     };
 
     int wrong_letters = 0;
@@ -81,7 +96,7 @@ void check(int len, char list[len],char correct_letters[len],char checked_letter
         }
     }
     if(wrong_letters == 26){
-        check(len,list,correct_letters,checked_letters,checked_num,stage);
+        check(len,list,correct_letters,checked_letters,checked_num,stage,rand_word);
     }
 
     int ok = 0;
@@ -92,24 +107,31 @@ void check(int len, char list[len],char correct_letters[len],char checked_letter
             ok = 0;
         };
     };
-
-    if(ok == sizeof(&checked_letters)/sizeof(checked_letters[0])){
-        checked_letters[checked_num] = input;
-        checked_num++;
-    };
     
     for (int i = 0; i < len; i++) {
         if (list[i] == input) {
             correct_letters[i] = input;
             checked_successfully = 1;
         }
-    };
+    };   
 
-    if(checked_successfully == 0){
-        stage++;
+    int letter_is_not_correct = 0;
+    for(int i = 0;i < 100;i++){
+        if(input == checked_letters[i]){
+            letter_is_not_correct = 1;
+        }
     }
 
-    check(len,list,correct_letters,checked_letters,checked_num,stage);
+    if(checked_successfully == 0 && letter_is_not_correct == 0){
+        stage++;
+    }; 
+
+    if(ok == sizeof(&checked_letters)/sizeof(checked_letters[0])){
+        checked_letters[checked_num] = input;
+        checked_num++;
+    };
+
+    check(len,list,correct_letters,checked_letters,checked_num,stage,rand_word);
 }
 
 int main() {
@@ -133,7 +155,8 @@ int main() {
     int checked_num = 0;
     char checked_letters[127] = {'_'};
     int stage = 0;
-    check(strlen(rand_word), rand_word_list,correct_letters,checked_letters,checked_num,stage);
+    check(strlen(rand_word), rand_word_list,correct_letters,checked_letters,checked_num,stage,rand_word);
 
     return 0;
 }
+
