@@ -77,7 +77,7 @@ void check(int len, char list[len],char correct_letters[len],char checked_letter
         char answer;
         scanf(" %c",&answer);
         if(answer == 'y'){
-            exit(0);
+            main();
         }else{
             exit(0);
         }
